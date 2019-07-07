@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <!-- Basic Page Needs
+             –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <meta charset="utf-8">
+        <title>Oxfs: A Fast SFTP File System</title>
+        <meta name="description" content="A Fast SFTP File System">
+        <meta name="author" content="RainMark">
+
+        <!-- Mobile Specific Metas
+             –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- FONT
+             –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+        <!-- CSS
+             –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <link rel="stylesheet" href="skeleton.css">
+        <link rel="stylesheet" href="normalize.css">
+
+        <!-- Scripts
+             –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.min.js"></script> -->
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+        <!-- Favicon
+             –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <!-- <link rel="icon" type="image/png" href="favicon.png"> -->
+
+    </head>
+    <body class="code-snippets-visible">
+
+        <!-- Primary Page Layout
+             –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <div class="container">
+            <section class="header" style="text-align: center">
+                <h1 class="title">A dead simple, fast SFTP file system</h1>
+                <a class="github-button" href="https://github.com/RainMark/oxfs" data-show-count="true" aria-label="Star RainMark/oxfs on GitHub">Star</a>
+                <a class="github-button" href="https://github.com/RainMark/oxfs/fork" data-show-count="true" aria-label="Fork RainMark/oxfs on GitHub">Fork</a>
+                <a class="github-button" href="https://github.com/RainMark" data-show-count="true" aria-label="Follow @RainMark on GitHub">Follow @RainMark</a>
+            </section>
+
+            <!-- Intro -->
+            <div class="docs-section" id="intro" style="margin-top: 30px">
+                <h5 class="docs-header">YOU NEED OXFS</h5>
+                <p>Oxfs is a user-space network file system similar to SSHFS, and the underlying data transfer is based on the SFTP protocol. Oxfs introduces an asynchronous refresh policy to solve the jamming problem caused by the mismatch between network speed and user operation file speed. When Oxfs writes a file, it first writes to the local cache file and submits an asynchronous update task to update the content to the remote host. Similarly, when reading a file, it is preferred to read from a local cache file. Oxfs's data cache eventually falls to disk, and even if it is remounted, the history cache can still be used.<p/>
+                    <p>It can be said that Oxfs is a better alternative to SSHFS :)<p/>
+            </div>
+
+            <!-- Get Started -->
+            <div class="docs-section" id="get-started">
+                <h5 class="docs-header">GET STARTED</h5>
+                <h6>Linux</h6>
+                <ul>
+                    <li>Setup</li>
+                </ul>
+                <pre>$ sudo apt-get install python3.7<br>$ python3.7 -m pip install oxfs --user</pre>
+                <ul>
+                    <li>Run Oxfs</li>
+                </ul>
+                <pre>$ mkdir remote<br>$ sudo oxfs -s user@xxx.xxx.xxx.xxx -m remote -r /home/oxfs -p /tmp/oxfs</pre>
+                <h6>Darwin</h6>
+                <ul>
+                    <li>Setup</li>
+                </ul>
+                <pre>$ brew install python3<br>$ mkdir ~/.venv<br>$ python3 -m venv ~/.venv/oxfs<br>$ source ~/.venv/oxfs/bin/activate<br>$ pip install oxfs</pre>
+                <ul>
+                    <li>Run Oxfs</li>
+                </ul>
+                <pre>$ mkdir remote<br>$ sudo oxfs -s user@xxx.xxx.xxx.xxx -m remote -r /home/oxfs -p /tmp/oxfs</pre>
+
+                <h6>Get Help</h6>
+                <pre>$ oxfs --help
+usage: oxfs [-h] [-s HOST] [-m MOUNT_POINT] [-r REMOTE_PATH] [-p CACHE_PATH]
+            [-l LOGGING] [-d] [-v]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s HOST, --host HOST  ssh host (for example: root@127.0.0.1)
+  -m MOUNT_POINT, --mount_point MOUNT_POINT
+                        mount point
+  -r REMOTE_PATH, --remote_path REMOTE_PATH
+                        remote path, default: /
+  -p CACHE_PATH, --cache_path CACHE_PATH
+                        oxfs files cache path
+  -l LOGGING, --logging LOGGING
+                        set log file, default: /tmp/oxfs.log
+  -d, --daemon          run in background
+  -v, --verbose         print verbose info</pre>
+            </div>
+
+            <div class="docs-section" id="perfomance">
+                <h5 class="docs-header">PERFORMANCE</h5>
+                <h6>Environment</h6>
+                <ul>
+                    <li>VPS: BandwagonHost (SPECIAL 10G KVM PROMO V3 - LOS ANGELES - CN2)</li>
+                    <li>VPS Operating System: Centos 7 x86_64 bbr</li>
+                    <li>Host: Intel® Core™ i5-4210U CPU @ 1.70GHz × 4 , SSD 125.5 GB</li>
+                    <li>Host Operating System: Ubuntu 18.04.2 LTS x86_64 reno</li>
+                    <li>Ping Latency: 190 ms</li>
+                </ul>
+                <h6>Method</h6>
+                <pre>$ iozone -R -b output.xls -p -c -r 1k -s 20m -l 1 -u 1</pre>
+
+                <ul>
+                    <li>OXFS vs SSHFS</li>
+                </ul>
+                <img src="https://github.com/RainMark/oxfs/raw/master/benchmark/oxfs-vs-sshfs.png" style="width:98%;height:98%">
+
+                <ul>
+                    <li>SSHFS performance (default parameters).</li>
+                    <ul>
+                        <li>SSHFS enable the kernel cache by default, that’s why re-read is deadly fast.</li>
+                    </ul>
+                </ul>
+                <img src="https://github.com/RainMark/oxfs/raw/master/benchmark/sshfs.png" style="width:100%;height:100%">
+
+                <ul>
+                    <li>Oxfs performance (default parameters).</li>
+                    <ul>
+                        <li>Oxfs just enable the fuse auto_cache flag.</li>
+                    </ul>
+                </ul>
+                <img src="https://github.com/RainMark/oxfs/raw/master/benchmark/oxfs.png" style="width:100%;height:100%">
+            </div>
+
+            <div class="footer" id="page-footer" style="margin-top:13px;margin-bottom:1px;text-align:center">
+                <hr>
+                <p>Copyright @RainMark</p>
+            </div>
+
+            <!-- End Document
+                 –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    </body>
+</html>
